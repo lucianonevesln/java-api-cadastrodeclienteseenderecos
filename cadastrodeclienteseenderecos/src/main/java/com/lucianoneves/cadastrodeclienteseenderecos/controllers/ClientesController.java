@@ -1,10 +1,9 @@
 package com.lucianoneves.cadastrodeclienteseenderecos.controllers;
 
-import com.lucianoneves.cadastrodeclienteseenderecos.dtos.ClientesDto;
+import com.lucianoneves.cadastrodeclienteseenderecos.models.ClientesEnderecosModel;
 import com.lucianoneves.cadastrodeclienteseenderecos.models.ClientesModel;
 import com.lucianoneves.cadastrodeclienteseenderecos.services.ClientesService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +22,10 @@ public class ClientesController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveCliente(@RequestBody @Valid ClientesDto clientesDto) {
-        if (clientesService.existsByEmail(clientesDto.getEmail())) {
+    public ResponseEntity<Object> saveCliente(@RequestBody @Valid ClientesModel clientesModel) {
+        if (clientesService.existsByEmail(clientesModel.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("E-mail já existe.");
         }
-        ClientesModel clientesModel = new ClientesModel();
-        BeanUtils.copyProperties(clientesDto, clientesModel);
         return ResponseEntity.status(HttpStatus.OK).body(clientesService.save(clientesModel));
     }
 
@@ -48,11 +45,9 @@ public class ClientesController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateCliente(@PathVariable(value = "id") Long id,
-                                                @RequestBody @Valid ClientesDto clientesDto) {
+                                                @RequestBody @Valid ClientesModel clientesModel) {
         Optional<ClientesModel> clientesModelOptional = clientesService.findById(id);
         if (clientesModelOptional.isPresent()) {
-            ClientesModel clientesModel = new ClientesModel();
-            BeanUtils.copyProperties(clientesDto, clientesModel);
             clientesModel.setId(clientesModelOptional.get().getId());
             return ResponseEntity.status(HttpStatus.OK).body(clientesService.save(clientesModel));
         }

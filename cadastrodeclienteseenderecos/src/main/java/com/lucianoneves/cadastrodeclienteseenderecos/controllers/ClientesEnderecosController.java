@@ -1,10 +1,8 @@
 package com.lucianoneves.cadastrodeclienteseenderecos.controllers;
 
-import com.lucianoneves.cadastrodeclienteseenderecos.dtos.ClientesEnderecosDto;
 import com.lucianoneves.cadastrodeclienteseenderecos.models.ClientesEnderecosModel;
 import com.lucianoneves.cadastrodeclienteseenderecos.services.ClientesEnderecosService;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +21,7 @@ public class ClientesEnderecosController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveClienteEndereco(@RequestBody @Valid ClientesEnderecosDto clientesEnderecosDto) {
-        ClientesEnderecosModel clientesEnderecosModel = new ClientesEnderecosModel();
-        BeanUtils.copyProperties(clientesEnderecosDto, clientesEnderecosModel);
+    public ResponseEntity<Object> saveClienteEndereco(@RequestBody @Valid ClientesEnderecosModel clientesEnderecosModel) {
         return ResponseEntity.status(HttpStatus.OK).body(clientesEnderecosService.save(clientesEnderecosModel));
     }
 
@@ -45,11 +41,9 @@ public class ClientesEnderecosController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateClienteEnderecos(@PathVariable(value = "id") Long id,
-                                                         @RequestBody @Valid ClientesEnderecosDto clientesEnderecosDto) {
+                                                         @RequestBody @Valid ClientesEnderecosModel clientesEnderecosModel) {
         Optional<ClientesEnderecosModel> clientesEnderecosModelOptional = clientesEnderecosService.findById(id);
         if (clientesEnderecosModelOptional.isPresent()) {
-            ClientesEnderecosModel clientesEnderecosModel = new ClientesEnderecosModel();
-            BeanUtils.copyProperties(clientesEnderecosDto, clientesEnderecosModel);
             clientesEnderecosModel.setId(clientesEnderecosModelOptional.get().getId());
             return ResponseEntity.status(HttpStatus.OK).body(clientesEnderecosService.save(clientesEnderecosModel));
         }
